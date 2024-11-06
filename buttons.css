@@ -1,0 +1,152 @@
+.hidden {
+    display: none;
+}
+
+/* Estilos de Botões */
+button {
+    padding: 12px 24px;
+    margin-top: 10px;
+    background-color: #3e325f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #7766a8;
+}
+
+#buttons-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: right; /* Alinhe os botões à direita do contêiner */
+}
+
+#instrucoes-button {
+    position: absolute;
+    top: 20px; 
+    right: 20px; 
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid #ee8f41;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#instrucoes-button img.instrucao-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+#instrucoes-button:hover {
+    background-color: #ec6a00; 
+    transform: scale(1.05);
+}
+
+#classificacao-button {
+    position: absolute;
+    top: 80px; 
+    right: 20px; 
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid #ee8f41;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#classificacao-button img.classificacao-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+#classificacao-button:hover {
+    background-color: #ec6a00; 
+    transform: scale(1.05);
+}
+
+#forfeit-button {
+    position: absolute;
+    top: 140px; 
+    right: 20px; 
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid #ee8f41;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#forfeit-button img.forfeit-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+#forfeit-button:hover {
+    background-color: #ec6a00; 
+    transform: scale(1.05);
+}
+
+
+.setting_capsule {
+    font-size: 16px;
+    padding: 20px;
+    background-color: rgba(248, 111, 7, 0.5);
+    border-radius: 15px;
+    color: #fff;
+    margin: 0 auto;
+    max-width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.setting_capsule:hover {
+    background-color: rgba(248, 111, 7, 0.7);
+    transform: scale(1.05);
+}
+
+#play-button {
+    display: block; 
+    margin: 10px auto; 
+    padding: 12px 24px;
+    background-color: rgba(248, 111, 7, 0.5);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+#play-button:hover {
+    background-color: #ec6a00; 
+    transform: scale(1.05);
+}
+

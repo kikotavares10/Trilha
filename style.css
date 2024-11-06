@@ -1,0 +1,123 @@
+/* Reset básico para bordas e tamanhos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: "Arial", sans-serif;
+    background: linear-gradient(#f2cfc0, #ced4ed);
+}
+
+/* Container de Imagem */
+.image-container {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.image-container img {
+    border: 2px solid rgb(78, 89, 151);
+    border-radius: 50%;
+    box-shadow: 10px 10px 10px 5px rgba(32, 31, 31, 0.2);
+}
+
+/* Título */
+.title {
+    padding: 20px;
+    color: rgb(5, 5, 8);
+    font-size: 30px;
+    text-align: center;
+}
+
+.title p {
+    font-size: 25px;
+}
+
+/* Caixa de Conteúdo */
+.content-box {
+    border-radius: 20px;
+    margin: 20px auto;
+    color: rgb(38, 30, 76);
+    font-size: 20px;
+    background-color: rgb(97, 91, 91);
+    padding: 10px;
+    box-shadow: 10px 10px 10px 5px rgba(14, 0, 0, 0.2);
+    max-height: 60vh;
+    overflow-y: auto;
+    width: 90%;
+    max-width: 800px; /* Limite de largura para telas maiores */
+}
+
+/* Seções Ocultas e Visíveis */
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+/* Configurações do Jogo */
+.game_settings {
+    padding: 10px;
+    border-radius: 15px;
+    margin-top: 60px;
+    color: rgb(247, 246, 249);
+    display: flex;
+    flex-direction: row; 
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Instruções */
+.painel-instrucoes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    
+}
+
+.instrucoes-conteudo {
+    background: #9d4f23;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;  
+    max-height: 80%;  
+    width: 90%;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    
+}
+
+#fechar-instrucoes {
+    margin-top: auto; 
+}
+
+h4 {
+    color: #FFD700; 
+}
+
+#footer {
+    color: white; 
+    padding: 10px; 
+    position: relative; 
+    width: 100%; 
+    bottom: 0; 
+    text-align: center; 
+}
+
+.hidden {
+    display: none;
+}
