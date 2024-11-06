@@ -1,0 +1,21 @@
+{
+  "name": "trilha-game",
+  "version": "1.0.0",
+  "main": "jogo.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kikotavares10/Trilha-Game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kikotavares10/Trilha-Game/issues"
+  },
+  "homepage": "https://github.com/kikotavares10/Trilha-Game#readme",
+  "keywords": [],
+  "description": ""
+}

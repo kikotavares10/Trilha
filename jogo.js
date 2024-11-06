@@ -1,362 +1,330 @@
-const readline = require('readline');
+import { Utils } from './utils.js';
+import { Jogador } from './jogador.js';
+import { Tabuleiro } from './tabuleiro.js';
 
-class Jogador {
-    constructor(id) {
-        this.id = id;              // ID do jogador (1 ou 2)
-        this.pecas = 0;            // Número de peças colocadas no tabuleiro
-    }
+export class Jogo {
+    constructor(jogador1, jogador2, tabuleiro) {
+        this.jogador1 = jogador1;
+        this.jogador2 = jogador2;
+        this.tabuleiro = tabuleiro;
+        this.turno = 2; // 2 para jogador1, 3 para jogador2
+        this.jogadas = 0; // Contador de jogadas para mudar de fase
+        this.winner = false;
+        this.fase = 1;
+    }  
 
-    adicionarPeca() {
-        this.pecas++;
-    }
+    // Função para verificar se um jogador formou uma trilha
+    verificarTrilha(linha,coluna) {  
+        const jogadorAdversario = (this.turno === 2) ? 3 : 2;
+        const jogador_adversario_Str = jogadorAdversario.toString();
 
-    removerPeca() {
-        if (this.pecas > 0) {
-            this.pecas--;
+        let count = 1;
+
+        // console.log("Entrou na trilha")
+
+        // console.log(`Truno: ${this.turno}`)
+
+        // Verificar coluna para baixo
+        for (let i = linha+1; i<this.tabuleiro.tamanho; i++) {
+            if (this.tabuleiro.forma[i][coluna] === this.turno.toString()) {
+                count++;
+            }
+            else if ( (this.tabuleiro.forma[i][coluna] === jogador_adversario_Str) || (this.tabuleiro.forma[i][coluna] === "4") || (this.tabuleiro.forma[i][coluna] === "1") ) {
+                break;
+            } 
         }
-    }
-}
 
-class Tabuleiro {
-    constructor() {
-        this.forma = [
-            ['1', '0', '0', '1', '0', '0', '1'],
-            ['0', '1', '0', '1', '0', '1', '0'],
-            ['0', '0', '1', '1', '1', '0', '0'],
-            ['1', '1', '1', '4', '1', '1', '1'],
-            ['0', '0', '1', '1', '1', '0', '0'],
-            ['0', '1', '0', '1', '0', '1', '0'],
-            ['1', '0', '0', '1', '0', '0', '1']
-        ];
+        // console.log(`Count: ${count}`)
 
-        this.conexoes = {
-            // Quadrado externo
-            '0,0': ['0,3', '3,0','1,1'],      
-            '0,3': ['0,0', '0,6', '1,3'], 
-            '0,6': ['0,3', '3,6','1,5'],
-            '3,0': ['0,0', '6,0', '3,1'],
-            '3,6': ['0,6', '6,6', '3,5'],
-            '6,0': ['3,0', '6,3','5,1'],
-            '6,3': ['6,0', '6,6', '5,3'],
-            '6,6': ['3,6', '6,3','5,5'],
-        
-            // Quadrado médio
-            '1,1': ['1,3', '3,1','0,0','2,2'],
-            '1,3': ['0,3', '1,1', '1,5', '2,3'], 
-            '1,5': ['1,3', '3,5','0,6','2,4'],
-            '3,1': ['1,1', '5,1', '3,0'],
-            '3,5': ['1,5', '5,5', '3,6'],
-            '5,1': ['3,1', '5,3','6,0','4,2'],
-            '5,3': ['6,3', '5,1', '5,5'],
-            '5,5': ['3,5', '5,3','6,6','4,4'],
-        
-            // Quadrado interno
-            '2,2': ['2,3', '3,2','1,1'],
-            '2,3': ['1,3', '2,2', '2,4'],
-            '2,4': ['2,3', '3,4','1,5'],
-            '3,2': ['2,2', '3,1', '4,2'],
-            '3,4': ['2,4', '3,5', '4,4'],
-            '4,2': ['3,2', '4,3','5,1'], 
-            '4,3': ['4,2','4,4','5,4'],
-            '4,4': ['4,3','3,4','5,5']
-        };
-
-        this.jogadas=1;
-    }
-
-    imprimir() {
-        for (let linha of this.forma) {
-            console.log(linha.join(' '));
+        //Verificar coluna para cima
+        for (let i = linha-1; i>=0; i--) {
+            if (this.tabuleiro.forma[i][coluna] === this.turno.toString()) {
+                count++;
+            }
+            else if ( (this.tabuleiro.forma[i][coluna] === jogador_adversario_Str) || (this.tabuleiro.forma[i][coluna] === "4") || (this.tabuleiro.forma[i][coluna] === "1") ) {
+                break;
+            } 
         }
-    }
 
-    jogadaValida(linha, coluna) {
-        return linha >= 0 && linha < this.forma.length && coluna >= 0 && coluna < this.forma[0].length && this.forma[linha][coluna] === '1';
-    }
-
-    colocarPeca(linha, coluna, jogadorId) {
-        if (this.jogadaValida(linha, coluna)) {
-            this.forma[linha][coluna] = jogadorId.toString();
+        //Verifica se tem moinhos na coluna
+        if (count === 3){
             return true;
+        }
+        else{
+            count=1;
+        }
+
+        //Verificar linha para direita
+        for (let i = coluna+1; i<this.tabuleiro.tamanho; i++) {
+            if (this.tabuleiro.forma[linha][i] === this.turno.toString()) {
+                count++;
+            }
+            else if ( (this.tabuleiro.forma[linha][i] === jogador_adversario_Str) || (this.tabuleiro.forma[linha][i] === "4") || (this.tabuleiro.forma[linha][i] === "1") ) {
+                break;
+            } 
+        }
+
+        //Verifica linha esquerda
+        for (let i = coluna-1; i>=0; i--) {
+            if (this.tabuleiro.forma[linha][i] === this.turno.toString()) {
+                count++;
+            }
+            else if ( (this.tabuleiro.forma[linha][i] === jogador_adversario_Str) || (this.tabuleiro.forma[linha][i] === "4") || (this.tabuleiro.forma[linha][i] === "1") ) {
+                break;
+            } 
+        }
+        if (count === 3) {
+            return true;
+        }
+
+    return false;
+
+    }
+
+    // Função para remover peça do adversário
+    async removerPecaAdversaria(linha,coluna) {
+        Utils.mostrarMensagem("Escolha a posição para remover uma peça do adversário.");
+    
+        const jogadorAdversario = (this.turno === 2) ? 3 : 2;
+        const jogador_adversario_Str = jogadorAdversario.toString();
+    
+        let posicaoValida = false;
+    
+        // while (!posicaoValida) {
+        //     // Aguardar entrada do usuário para linha e coluna
+        //     await new Promise((resolve) => {
+        //         document.getElementById("confirmar-jogada").onclick = () => {
+        //             linha = parseInt(document.getElementById("linha").value, 10) - 1;
+        //             coluna = parseInt(document.getElementById("coluna").value, 10) - 1;
+        //             resolve(); // Resolva a promessa após o clique no botão
+        //         };
+        //     });
+    
+        //     if (this.tabuleiro.forma[linha][coluna] === jogador_adversario_Str) {
+        //         posicaoValida = true; // Se a posição for válida, saia do loop
+        //     } else if (this.tabuleiro.forma[linha][coluna] === this.turno) {
+        //         Utils.mostrarMensagem(`Não pode remover uma peça sua jogador ${this.turno}`);
+        //     } else {
+        //         Utils.mostrarMensagem(`Jogada inválida. Tente novamente jogador ${this.turno}`);
+        //     }
+        // }
+    
+        // Após obter uma posição válida
+        this.tabuleiro.removerPeca(linha, coluna);
+    
+        if (this.turno === 2) {
+            this.jogador2.pecas--;
         } else {
+            this.jogador1.pecas--;
+        }
+    
+        Utils.mostrarMensagem(`Peça do Jogador ${jogadorAdversario} removida.`);
+    }
+    
+
+    // Função para a fase 1: Colocação das peças
+    async fase1(linha,coluna) {
+
+        // console.log(`Tabuleiro antes de qualquer jogada ${this.tabuleiro.forma}`)
+
+        // this.tabuleiro.imprimir(this.turno);
+
+        if (this.tabuleiro.colocarPeca(linha, coluna, this.turno)) {
+            
+            if (this.turno === 2){
+                this.jogador1.pecas++;
+            }
+            else{
+                this.jogador2.pecas++;
+            }
+
+            //console.log(`Tabuleiro depois da jogada ${this.tabuleiro.forma}`)
+            this.tabuleiro.imprimir(this.turno);
+
+            if (this.verificarTrilha(linha, coluna)) {
+                Utils.mostrarMensagem(`Jogador ${this.turno} formou uma trilha!`);
+                console.log("Formou a trilha")
+                const { x: i, y: j } = await aguardarClique();
+                this.removerPecaAdversaria(i,j);
+                //console.log(`Tabuleiro depois de remover a peça ${this.tabuleiro.forma}`);
+                this.tabuleiro.imprimir(this.turno);
+
+            } 
+            
+        }
+    }
+
+    async fase2(linha,coluna,linha2,coluna2) {
+        const jogadorAdversario = (this.turno === 2) ? 3 : 2;
+
+        // Executar o movimento
+        this.tabuleiro.moverPeca(linha, coluna, linha2, coluna2, this.turno);
+        this.tabuleiro.imprimir(this.turno);
+    
+        if (this.verificarTrilha(linha2, coluna2)) {
+            // console.log("Trilha verdadeira")
+            Utils.mostrarMensagem(`Jogador ${this.turno} formou uma trilha!`);
+            const { x: i, y: j } = await aguardarClique();
+            this.removerPecaAdversaria(i,j);
+            //console.log(`Tabuleiro depois de remover a peça ${this.tabuleiro.forma}`);
+            this.tabuleiro.imprimir(this.turno);
+        }
+    }
+
+    receberCoordenadasfase1(linha,coluna){
+
+        const jogadorAdversario = (this.turno === 2) ? 3 : 2;
+
+        // console.log(`Linha: ${linha}`)
+        // console.log(`Coluna: ${coluna}`)
+
+        if (this.tabuleiro.forma[linha][coluna] === jogadorAdversario.toString()) {
+            console.log(`Posição já ocupada por peça do jogador ${jogadorAdversario}`)
             return false;
         }
-    }
-
-    removerPeca(linha, coluna) {
-        this.forma[linha][coluna] = '1'; // Volta a ser um espaço disponível
-    }
-
-    moverPeca(linhaOrigem, colunaOrigem, linhaDestino, colunaDestino, jogadorId) {
-        if (this.forma[linhaOrigem][colunaOrigem] === jogadorId.toString() && this.jogadaValida(linhaDestino, colunaDestino)) {
-            // Remove peça da origem e move para o destino
-            this.forma[linhaOrigem][colunaOrigem] = '1';
-            this.forma[linhaDestino][colunaDestino] = jogadorId.toString();
-            return true;
-        }
-        return false;
-    }
-
-    // Verificar se uma casa está conectada a outra
-    posicoesAdjacentes(linha, coluna) {
-        const posicoes = [];
-        const posAtual = `${linha},${coluna}`;
-
-        if (this.conexoes[posAtual]) {
-            for (let adj of this.conexoes[posAtual]) {
-                const [adjLinha, adjColuna] = adj.split(',').map(Number);
-                if (this.jogadaValida(adjLinha, adjColuna)) {
-                    posicoes.push([adjLinha, adjColuna]);
-                }
-            }
+        
+        else if (!this.tabuleiro.jogadaValida(linha, coluna)) {
+            console.log(`Jogada inválida. Tente novamente ${this.jogo.turno}`)
+            return false;
         }
 
-        return posicoes;
-    }
-}
-
-class Moinho {
-    constructor() {
-        this.moinhos = [];  // Lista de moinhos, cada moinho é um array de 3 posições
-    }
-
-    adicionarMoinho(posicoes) {
-        // Adiciona um novo moinho se tiver exatamente 3 posições
-        if (posicoes.length === 3) {
-            this.moinhos.push(posicoes);
-        }
-    }
-
-    estaEmMoinho(posicao) {
-        // Verifica se a posição está em algum moinho
-        for (const moinho of this.moinhos) {
-            if (moinho.includes(posicao)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    todosEmMoinho(pecasDoJogador) {
-        // Verifica se todas as peças do jogador estão em moinhos
-        for (const peca of pecasDoJogador) {
-            if (!this.estaEmMoinho(peca)) {
-                return false;
-            }
-        }
         return true;
+
     }
-}
 
-let jogador1 = new Jogador(2);
-let jogador2 = new Jogador(3);
-let turno = 1;  // Alterna entre os jogadores
+    receberCoordenadasfase2(linha,coluna,linha2,coluna2){
 
-let tabuleiro = new Tabuleiro();
+        const jogadorAdversario = (this.turno === 2) ? 3 : 2;
 
-// Cria a interface readline
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+        // console.log(`Linha: ${linha}`)
+        // console.log(`Coluna: ${coluna}`)
+        // console.log(`Linha: ${linha2}`)
+        // console.log(`Coluna: ${coluna2}`)
 
-
-// Função para verificar se um jogador formou uma trilha
-function verificarTrilha(jogador,linha,coluna) {  
-    const jogadorAtual = (jogador === jogador1.id) ? jogador1.id : jogador2.id;
-    const jogador_atual_Str = jogadorAtual.toString();
-    const jogadorAdversario = (jogador === jogador1.id) ? jogador2.id : jogador1.id;
-    const jogador_adversario_Str = jogadorAdversario.toString();
-
-    count = 1;
-
-    // Verificar coluna para baixo
-    for (let i = linha+1; i<7; i++) {
-        if (tabuleiro.forma[i][coluna] === jogador_atual_Str) {
-            count++;
+        if (this.tabuleiro.forma[linha][coluna] === jogadorAdversario.toString()) {
+            console.log(`Peça pertence ao jogador adversário ${jogadorAdversario}`)
+            return false;
         }
-        else if ( (tabuleiro.forma[i][coluna] === jogador_adversario_Str) || (tabuleiro.forma[i][coluna] === "4") ) {
-            break;
-        } 
-    }
 
-    //Verificar coluna para cima
-    for (let i = linha-1; i>=0; i--) {
-        if (tabuleiro.forma[i][coluna] === jogador_atual_Str) {
-            count++;
+        else if (this.tabuleiro.forma[linha][coluna] != this.turno){
+            console.log(`Peça não encontrada na posição ${linha} ${coluna}`)
+            return false;
         }
-        else if ( (tabuleiro.forma[i][coluna] === jogador_adversario_Str) || (tabuleiro.forma[i][coluna] === "4") ) {
-            break;
-        } 
-    }
 
-    //Verifica se tem moinhos na coluna
-    if (count === 3){
+        else if (!this.tabuleiro.movimentoValido(linha, coluna, linha2, coluna2, this.turno)){
+            return false;
+        }
+        
         return true;
-    }
-    else{
-        count=1;
-    }
 
-    //Verificar linha para direita
-    for (let i = coluna+1; i<7; i++) {
-        if (tabuleiro.forma[linha][i] === jogador_atual_Str) {
-            count++;
+    }
+    
+    gameOver(){
+        if (this.jogador1.pecas <= 2){
+            Utils.mostrarMensagem("O jogador 3 ganhou")
+            this.winner=true;
         }
-        else if ( (tabuleiro.forma[linha][i] === jogador_adversario_Str) || (tabuleiro.forma[linha][i] === "4") ) {
-            break;
-        } 
-    }
 
-    //Verifica linha esquerda
-    for (let i = coluna-1; i>=0; i--) {
-        if (tabuleiro.forma[linha][i] === jogador_atual_Str) {
-            count++;
+        else if (this.jogador2.pecas <= 2){
+            Utils.mostrarMensagem("O jogador 2 ganhou")
+            this.winner=true;
         }
-        else if ( (tabuleiro.forma[linha][i] === jogador_adversario_Str) || (tabuleiro.forma[linha][i] === "4") ) {
-            break;
-        } 
-    }
-    if (count === 3) {
-        return true;
-    }
-
-return false;
-
-}
-
-//Aqui faz a jogada
-function fazerJogada(linha, coluna, jogador) {
-    if (tabuleiro.colocarPeca(linha, coluna, jogador.id)) {
-        jogador.adicionarPeca();
-        return true;
-    } else {
-        console.log('Jogada inválida. Tente novamente.');
-        return false;
     }
 }
-
-
-// Função para remover peça do adversário
-function removerPecaAdversaria(jogador) {
-    const jogadorAdversario = (jogador === jogador1) ? jogador2 : jogador1;
-
-    rl.question('Escolha a linha da peça do adversário a ser removida (1-7): ', (linhaInput) => {
-        const linha = parseInt(linhaInput, 10) - 1;
-
-        rl.question('Escolha a coluna da peça do adversário a ser removida (1-7): ', (colunaInput) => {
-            const coluna = parseInt(colunaInput, 10) - 1;
-
-            //console.group(`Linha: ${linha}`)
-            //console.group(`Coluna: ${coluna}`)
-            //console.group(`id: ${jogadorAdversario.id}`)
-
-            if (tabuleiro.forma[linha][coluna] === jogadorAdversario.id.toString()) {
-                tabuleiro.removerPeca(linha, coluna);
-                console.log(`Peça do Jogador ${jogadorAdversario.id} removida.`);
-                turno = turno === 1 ? 2 : 1;
-                pedirJogada();
-            } else {
-                console.log('Escolha inválida. Tente novamente.');
-                removerPecaAdversaria(jogador); 
-            }
-        });
-    });
-}
-
-
-// Função para pedir jogada na fase de movimentação
-function pedirMovimento() {
-    const jogadorAtual = turno === 1 ? jogador1 : jogador2;
-    console.log(`\nJogador ${turno}, mova uma de suas peças!`);
-    moverPeca(jogadorAtual);
-}
-
-
-// Função que pede input do jogador e continua o jogo
-function pedirJogada() {
-    tabuleiro.imprimir();  // Agora usamos o método da classe Tabuleiro para imprimir
-
-    const jogadorAtual = turno === 1 ? jogador1 : jogador2;
-    console.log(`\nJogador ${turno}, é a sua vez!`);
-
-    if (tabuleiro.jogadas <= 18) {
-        rl.question('Escolha a linha (1-7) para colocar a peça: ', (linhaInput) => {
-            const linha = parseInt(linhaInput, 10) - 1;
-
-            rl.question('Escolha a coluna (1-7) para colocar a peça: ', (colunaInput) => {
-                const coluna = parseInt(colunaInput, 10) - 1;
-
-                if (tabuleiro.colocarPeca(linha, coluna, jogadorAtual.id)) {
-                    tabuleiro.jogadas++;
-                    if (verificarTrilha(jogadorAtual.id, linha, coluna)) {
-                        console.log(`Jogador ${turno} formou uma trilha!`);
-                        removerPecaAdversaria(jogadorAtual);
-                    } else {
-                        turno = turno === 1 ? 2 : 1;  // Alterna o turno
-                        pedirJogada();
-                    }
-                } else {
-                    console.log('Posição inválida. Tente novamente.');
-                    pedirJogada();
-                }
-            });
-        });
-    } else {
-        console.log('Todos os jogadores já colocaram suas peças. Agora mova suas peças.');
-        moverPeca(jogadorAtual); // Inicia a fase de movimentação
-    }
-}
-
-// Função para mover uma peça
-function moverPeca(jogador) {
-    rl.question('Escolha a linha da peça que deseja mover (1-7): ', (linhaInput) => {
-        const linha = parseInt(linhaInput, 10) - 1;
-
-        rl.question('Escolha a coluna da peça que deseja mover (1-7): ', (colunaInput) => {
-            const coluna = parseInt(colunaInput, 10) - 1;
-
-            if (tabuleiro.forma[linha][coluna] === jogador.id.toString()) {
-                const adjacentes = tabuleiro.posicoesAdjacentes(linha, coluna);
-
-                if (adjacentes.length > 0) {
-                    console.log('Posições adjacentes disponíveis:');
-                    adjacentes.forEach((pos, index) => {
-                        console.log(`${index + 1}: [${pos[0] + 1}, ${pos[1] + 1}]`);
-                    });
-
-                    rl.question('Escolha a posição para mover (escolha o número correspondente): ', (posicaoInput) => {
-                        const posicaoEscolhida = parseInt(posicaoInput, 10) - 1;
-                        const [novaLinha, novaColuna] = adjacentes[posicaoEscolhida];
-
-                        // Mover a peça
-                        tabuleiro.removerPeca(linha, coluna);
-                        tabuleiro.colocarPeca(novaLinha, novaColuna, jogador.id);
-                        console.log(`Peça movida para [${novaLinha + 1}, ${novaColuna + 1}]`);
-
-                        turno = turno === 1 ? 2 : 1;
-                        pedirJogada();
-                    });
-                } else {
-                    console.log('Não há posições adjacentes disponíveis para mover. Tente novamente.');
-                    moverPeca(jogador);
-                }
-            } else {
-                console.log('Você não tem uma peça nessa posição. Tente novamente.');
-                moverPeca(jogador);
-            }
-        });
-    });
-}
-
 
 
 // Função para iniciar o jogo
-function iniciarJogo() {
-    console.log("Bem-vindo ao Jogo Trilha!");
-    pedirJogada();
+async function iniciarJogo() {
+    console.log("Função iniciarJogo chamada");
+    Utils.mostrarMensagem("Bem-vindo ao Jogo Trilha!");
+    // console.log("Descambou");
+    let jogador1 = new Jogador(2);
+    let jogador2 = new Jogador(3);
+    let tabuleiro = new Tabuleiro();
+
+    const jogo = new Jogo(jogador1, jogador2, tabuleiro);
+
+    jogo.tabuleiro.imprimir(jogo.turno); // Exibe o tabuleiro após o início
+
+    // console.log("Descambou ainda mais");
+
+    await aguardarJogada(jogo);
 }
 
-// Chama a função para iniciar o jogo
-iniciarJogo();
+async function aguardarJogada(jogo) {
+    let i, j, k, l; // Variáveis para coordenadas dos cliques
 
+    // Laço para continuar até que o jogo tenha um vencedor
+    while (!jogo.winner) {
+
+        // Atualiza a fase do jogo conforme o número de jogadas
+        if (jogo.fase === 1 && jogo.tabuleiro.jogadas > 8) {
+            jogo.fase = 2;
+        }
+
+        if (jogo.fase === 2){
+            jogo.gameOver();
+            console.log(`Acabou e o winner esta a ${jogo.winner}`)
+            if (jogo.winner) break; // Sai do loop se o jogo acabou
+        }
+
+        Utils.mostrarMensagem(`O jogador ${jogo.turno} faça o seu movimento para a fase ${jogo.fase}`);
+        console.log(`A fase do jogo é ${jogo.fase}`);
+
+        // console.log(`Tabuleiro atual: ${jogo.tabuleiro.forma}`)
+
+        // Passo 1: Aguarda o primeiro clique
+        const { x: i, y: j } = await aguardarClique();
+
+        if (jogo.fase === 1) {
+            // Fase 1: Executa a jogada se for possível
+            if (jogo.receberCoordenadasfase1(i, j)) {
+                console.log("Executa ação para fase 1");
+                await jogo.fase1(i, j);
+                console.log("Jogada válida na fase 1!");
+                // Alternar turno
+                jogo.tabuleiro.jogadas++;
+                jogo.turno = jogo.turno === 2 ? 3 : 2;
+            } else {
+                console.log("Jogada inválida na fase 1!");
+            }
+            // console.log(`Tabuleiro atual: ${jogo.tabuleiro.forma}`)
+
+        } else if (jogo.fase === 2) {
+
+            // Fase 2: Aguarda o segundo clique
+            const { x: k, y: l } = await aguardarClique();
+
+            // Verifica se a jogada com dois cliques é válida
+            if (jogo.receberCoordenadasfase2(i, j, k, l)) {
+                // Executa ação para fase 2
+                await jogo.fase2(i, j, k, l);
+                console.log("Jogada válida na fase 2!");
+                // Alternar turno
+                jogo.tabuleiro.jogadas++;
+                jogo.turno = jogo.turno === 2 ? 3 : 2;
+            } else {
+                console.log("Jogada inválida na fase 2!");
+            }
+        }
+
+    }
+}
+
+// Função auxiliar para aguardar um clique e retornar as coordenadas
+function aguardarClique() {
+    return new Promise((resolve) => {
+        document.addEventListener("jogadaClicada", function handler(event) {
+            const { i, j } = event.detail; // Captura as coordenadas do clique
+            document.removeEventListener("jogadaClicada", handler); // Remove o evento
+            resolve({ x: i, y: j }); // Retorna as coordenadas
+        });
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("play-button").addEventListener("click", async () => {
+        await iniciarJogo(); // Inicia o jogo
+    });
+});

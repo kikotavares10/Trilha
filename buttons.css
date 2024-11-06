@@ -35,7 +35,6 @@ button:hover {
     border-radius: 50%;
     padding: 0;
     overflow: hidden;
-    border: 2px solid #ee8f41;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,7 +50,6 @@ button:hover {
 }
 
 #instrucoes-button:hover {
-    background-color: #ec6a00; 
     transform: scale(1.05);
 }
 
@@ -64,7 +62,6 @@ button:hover {
     border-radius: 50%;
     padding: 0;
     overflow: hidden;
-    border: 2px solid #ee8f41;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,7 +77,6 @@ button:hover {
 }
 
 #classificacao-button:hover {
-    background-color: #ec6a00; 
     transform: scale(1.05);
 }
 
@@ -93,7 +89,6 @@ button:hover {
     border-radius: 50%;
     padding: 0;
     overflow: hidden;
-    border: 2px solid #ee8f41;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -109,7 +104,6 @@ button:hover {
 }
 
 #forfeit-button:hover {
-    background-color: #ec6a00; 
     transform: scale(1.05);
 }
 
@@ -117,7 +111,7 @@ button:hover {
 .setting_capsule {
     font-size: 16px;
     padding: 20px;
-    background-color: rgba(248, 111, 7, 0.5);
+    background-color: rgba(31, 208, 221, 0.316);
     border-radius: 15px;
     color: #fff;
     margin: 0 auto;
@@ -136,7 +130,7 @@ button:hover {
     display: block; 
     margin: 10px auto; 
     padding: 12px 24px;
-    background-color: rgba(248, 111, 7, 0.5);
+    background-color: rgba(31, 208, 221, 0.316);
     color: white;
     border: none;
     border-radius: 5px;

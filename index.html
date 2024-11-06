@@ -8,36 +8,19 @@
     <link rel="stylesheet" href="autenticar.css">
     <link rel="stylesheet" href="buttons.css">
     <script src="script.js" type="module"></script>
+    <script src="jogo.js" type="module"></script>
+    <script src="script_game.js" type="module"></script>
+
     <title>Jogo Trilha</title>
 </head>
 
 <body>
-    <!-- Página de Login -->
-    <div id="login-box">
-        <div class="image-container">
-            <div class="image-border">
-                <img src="imagens/logo.jpg" alt="Trilha logo" width="100" height="100">
-            </div>
-        </div>
-        <h2>Login</h2>
-        <form>
-            <div class="user-box">
-                <input type="text" name="username" required>
-                <label>Usuário</label>
-            </div>
-            <div class="user-box">
-                <input type="password" name="password" required>
-                <label>Senha</label>
-            </div>
-            <button type="submit" id="submit-button">Enviar</button>
-        </form>
-    </div>
-
+    
     <!-- Página de Configuração -->
-    <div id="configurations" class="hidden">
+    <div id="configurations" class="none">
         <nav class="header">
             <div class="image-container">
-                <img src="imagens/logo.jpg" alt="Trilha logo" width="100" height="100">
+                <img src="images/logo.jpg" alt="Trilha logo" width="100" height="100">
             </div>
         </nav>
         <div class="title">
@@ -49,17 +32,9 @@
             <div class="setting_capsule">
                 <h3>Modo de Jogo:</h3>
                 <input type="radio" id="multiplayer" name="game-mode" value="multiplayer">
-                <label for="multiplayer">Jogador vs Jogador</label><br>
+                <label for="multiplayer">Jogador vs Jogador (soon)</label><br>
                 <input type="radio" id="cpu" name="game-mode" value="cpu">
                 <label for="cpu">Jogador vs CPU</label><br>           
-            </div>
-    
-            <div class="setting_capsule">
-                <h3>Cor:</h3>
-                <input type="radio" id="black" name="color-player" value="black">
-                <label for="black">Preto</label><br>
-                <input type="radio" id="white" name="color-player" value="white">
-                <label for="white">Branco</label><br>
             </div>
 
             <div class="setting_capsule">
@@ -91,20 +66,16 @@
             </div>
         </form>
     </div>
-    <div id="botoes" class="hidden"> 
+    <div id="botoes" class="none"> 
         <button id="instrucoes-button">
-            <img src="imagens/question.jpg" alt="question" class="instrucao-img">
+            <img src="images/question.png" alt="question" class="instrucao-img">
         </button>
         <button id="classificacao-button">
-            <img src="imagens/trofeu3.avif" alt="trofie" class="classificacao-img">
+            <img src="images/trophy4.png" alt="trophy" class="classificacao-img">
         </button>
         <button id="forfeit-button" class="hidden">
-            <img src="imagens/forfeit3.png" alt="forfeit" class="forfeit-img">
+            <img src="images/flags.png" alt="forfeit" class="forfeit-img">
         </button>
-    </div>
-
-    <div id="botoes_game" class="hidden">
-        <button id="play-button">Play</button>
     </div>
 
         
@@ -129,6 +100,15 @@
             <button id="fechar-instrucoes">Fechar</button>
         </div>
     </div> 
+
+    <div id="game">
+        <div id="tabuleiro" class="tabuleiro"></div> 
+        
+    </div>
+
+    <div id="botoes_game" class="none">
+        <button id="play-button">Play</button>
+    </div>
 
     <footer id="footer" class="hidden" style="text-align: center;">
         <p> Trilha Game</p>
