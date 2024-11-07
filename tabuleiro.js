@@ -2,18 +2,19 @@ import { Utils } from './utils.js';
 import { Jogo } from './jogo.js';
 
 export class Tabuleiro {
-    constructor(n=9) {
+    constructor(n=3) {
         this.jogadas = 1;
-        this.gerarForma(n);
-        this.tamanho = n;
+        this.gerarForma(n*2+1);
+        this.tamanho = n*2+1;
+        this.quadrados = n;
         this.acao = 1;      // 1 - colocar ; 2 - mover ; 3 - remover
         this.podeMover = false;
     }
 
-    gerarForma(n) {
-        console.log(`O tamnho de n é ${n}`)
-        const tabuleiro = Array.from({ length: n }, () => Array(n).fill('0'));
-        const meio = Math.floor(n / 2);
+    gerarForma(dimensao) {
+        console.log(`O tamnho de n é ${dimensao}`)
+        const tabuleiro = Array.from({ length: dimensao }, () => Array(dimensao).fill('0'));
+        const meio = Math.floor(dimensao / 2);
 
         // Define o centro do tabuleiro
         tabuleiro[meio][meio] = '4';
@@ -21,15 +22,15 @@ export class Tabuleiro {
         // Adiciona as casas (1) e as conexões (1) em camadas concêntricas
         for (let i = 0; i < meio; i++) {
             tabuleiro[i][i] = '1';
-            tabuleiro[i][n - 1 - i] = '1';
-            tabuleiro[n - 1 - i][i] = '1';
-            tabuleiro[n - 1 - i][n - 1 - i] = '1';
+            tabuleiro[i][dimensao - 1 - i] = '1';
+            tabuleiro[dimensao - 1 - i][i] = '1';
+            tabuleiro[dimensao - 1 - i][dimensao - 1 - i] = '1';
 
             if (i >= 0 && i < meio) {
                 tabuleiro[i][meio] = '1';
-                tabuleiro[n - 1 - i][meio] = '1';
+                tabuleiro[dimensao - 1 - i][meio] = '1';
                 tabuleiro[meio][i] = '1';
-                tabuleiro[meio][n - 1 - i] = '1';
+                tabuleiro[meio][dimensao - 1 - i] = '1';
             }
         }
 

@@ -6,7 +6,7 @@
 button {
     padding: 12px 24px;
     margin-top: 10px;
-    background-color: #3e325f;
+    background-color: #FFD700;
     color: white;
     border: none;
     border-radius: 5px;
@@ -109,11 +109,11 @@ button:hover {
 
 
 .setting_capsule {
-    font-size: 16px;
+    font-size: 17px;
     padding: 20px;
     background-color: rgba(31, 208, 221, 0.316);
     border-radius: 15px;
-    color: #fff;
+    color: #080808;
     margin: 0 auto;
     max-width: 300px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -131,7 +131,7 @@ button:hover {
     margin: 10px auto; 
     padding: 12px 24px;
     background-color: rgba(31, 208, 221, 0.316);
-    color: white;
+    color: rgb(7, 7, 7);
     border: none;
     border-radius: 5px;
     cursor: pointer;
