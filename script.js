@@ -5,13 +5,13 @@ const configurations = document.getElementById('configurations');
 const instrucoesButton = document.getElementById('instrucoes-button');
 const forfeitButton = document.getElementById('forfeit-button');
 const instrucoesPanel = document.getElementById('instrucoes');
+const classificacoesPanel = document.getElementById('classificacoes');
 const closeInstrucoes = document.getElementById('fechar-instrucoes');
+const closeClassificacoes = document.getElementById('fechar-classificacoes');
 const playButton = document.getElementById('play-button');
-const classificacaoButton = document.getElementById('classificacao-button');
-const botoes = document.getElementById('botoes')
+const classificacoesButton = document.getElementById('classificacao-button');
 const botoes_game=document.getElementById('botoes_game');
 const game = document.getElementById('game');
-
 
 
 instrucoesButton.addEventListener('click', () => {
@@ -38,6 +38,15 @@ forfeitButton.addEventListener('click', (event) => {
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("play-button").addEventListener("click", async () => {
-        await iniciarJogo(); // Inicia o jogo
+        await iniciarJogo(); 
     });
+});
+
+classificacoesButton.addEventListener('click', () => {
+    classificacoesPanel.classList.remove('hidden');
+    this.atualizarClassificacoes();
+});
+
+closeClassificacoes.addEventListener('click', () => {
+    classificacoesPanel.classList.add('hidden');
 });

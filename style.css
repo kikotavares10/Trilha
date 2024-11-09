@@ -104,7 +104,16 @@ html, body {
 #fechar-instrucoes {
     margin-top: auto; 
     color: black;
-    font-family: 'Fonte', sans-serif;        
+    font-family: 'Fonte', sans-serif; 
+    background-color: #FFD700;   
+    border: none;
+    border-radius: 5px;     
+}
+
+
+#fechar-instrucoes:hover {
+    background-color: #7766a8;
+    transition: background-color 0.3s ease;
 }
 
 h4 {
@@ -124,117 +133,217 @@ h4 {
     display: none;
 }
 
-
-.tabuleiro-grid {
-    border-collapse: collapse;
-    margin: 20px auto;
+/* Contêiner principal do jogo */
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Espaço entre o tabuleiro e as colunas laterais */
 }
 
+/* Estilo do contêiner do tabuleiro */
+#tabuleiro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+#game-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Contêiner para as peças dos jogadores */
+.pecas-jogador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 520px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos específicos para cada jogador */
+#pecas-jogador-azul {
+    background-color: #cceeff;
+}
+
+#pecas-jogador-vermelho {
+    background-color: #ffcccc;
+}
+
+/* Estilo das peças dentro do contêiner */
+.pecas-jogador .bola {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 5px 0;
+}
+
+/* Estrutura dos lados esquerdo e direito */
+#lado-esquerdo, #lado-direito {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contêiner para as peças removidas */
+.pecas-removidas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 80px;
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo das peças removidas */
+.pecas-removidas .bola {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 3px;
+}
+
+/* Estilo da grade do tabuleiro */
+.tabuleiro-grid {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 520px; /* Tamanho total do tabuleiro */
+    height: 520px;
+}
+
+/* Estilo das células */
 .tabuleiro-grid td {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    vertical-align: middle;
     position: relative;
 }
 
-/* Estilo para as bolas (casas disponíveis) */
-.bola {
-    width: 40px; /* Ajuste o tamanho conforme desejado */
-    height: 40px; /* Ajuste o tamanho conforme desejado */
-    border-radius: 50%; /* Faz com que o botão seja redondo */
-    cursor: pointer;
-    border: 2px solid transparent; /* Remove a borda padrão */
-    background-color: #00ccff; /* Mantém o fundo transparente para a cor do jogador */
-    padding: 0; /* Remove o preenchimento */
-    display: center; /* Permite centralizar conteúdo dentro do botão, se necessário */
-    align-items: center; /* Centraliza verticalmente */
-    justify-content: center; /* Centraliza horizontalmente */
+/* Estilo das peças (bolas) */
+.bola, .bola-azul, .bola-vermelha {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
 }
 
-/* Estilo para as linhas de ligação horizontais */
+/* Cores específicas das peças */
+.bola {
+    background-color: #00ccff;
+}
+
+.bola-azul {
+    background-color: blue;
+}
+
+.bola-vermelha {
+    background-color: red;
+}
+
+/* Estilos para as linhas de ligação */
+.linha-horizontal, .linha-vertical {
+    background-color: #7f8c8d;
+    position: absolute;
+}
+
+/* Linha horizontal */
 .linha-horizontal {
     width: 100%;
     height: 5px;
-    background-color: #7f8c8d;
-    position: absolute;
     top: 50%;
     left: 0;
     transform: translateY(-50%);
 }
 
-/* Estilo para as linhas de ligação verticais */
+/* Linha vertical */
 .linha-vertical {
     width: 5px;
     height: 100%;
-    background-color: #7f8c8d;
-    position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Para esconder algumas linhas em posições específicas */
-.invisivel {
-    visibility: hidden;
-}
-
-.casa-disponivel {
-    cursor: pointer;
-}
-
+/* Estilo para a célula do centro */
 .centro {
-    background-color: #f39c12;
-}
-
-/* Estilo base para os botões (bolas do jogador) */
-.bola-azul, .bola-vermelha {
-    width: 40px; /* Ajuste o tamanho conforme desejado */
-    height: 40px; /* Ajuste o tamanho conforme desejado */
-    border-radius: 50%; /* Faz com que o botão seja redondo */
-    cursor: pointer;
-    border: 2px solid transparent; /* Remove a borda padrão */
-    background-color: transparent; /* Mantém o fundo transparente para a cor do jogador */
-    padding: 0; /* Remove o preenchimento */
-    display: center; /* Permite centralizar conteúdo dentro do botão, se necessário */
-    align-items: center; /* Centraliza verticalmente */
-    justify-content: center; /* Centraliza horizontalmente */
-}
-
-/* Cores dos botões */
-.bola-azul {
-    background-color: blue; /* Cor de fundo do botão azul */
-}
-
-.bola-vermelha {
-    background-color: red; /* Cor de fundo do botão vermelho */
-}
-
-/* Evitar que o botão tenha borda ao ser focado */
-.bola-azul:focus, .bola-vermelha:focus {
-    outline: none; /* Remove a borda de foco */
+    background-color: transparent;
 }
 
 
-/* Estilo base para células do tabuleiro */
-.celula {
-    width: 40px; /* Ajuste conforme o tamanho desejado das células */
-    height: 40px;
-    text-align: center;
-    vertical-align: middle;
+.painel-classificacoes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: rgb(16, 12, 12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    
+}
+
+.classificacoes-conteudo {
+    background: #d19f83;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 700px;  
+    max-height: 90%;  
+    width: 90%;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    
+}
+
+#fechar-classificacoes {
+    margin-top: auto; 
+    color: white;
+    font-family: 'Fonte', sans-serif;  
+    background-color: #FFD700; 
+    border: none;
+    border-radius: 5px;     
+}
+
+#fechar-classificacoes:hover {
+    background-color: #7766a8;
+    transition: background-color 0.3s ease;
 }
 
 
-/* Estilo responsivo */
-@media (max-width: 768px) {
-    .tabuleiro-grid td {
-        width: 40px;
-        height: 40px;
-    }
 
-    .bola {
-        width: 30px;
-        height: 30px;
-    }
-}
+
+
+
+
+
+
+
+
+
+
+
 
 
 .mensagem {
@@ -249,7 +358,7 @@ h4 {
     border-radius: 5px;
     text-align: center;
     font-size: 16px;
-    max-width: 250px;
+    max-width: 150px;
     margin: 10px auto;
 }
 
@@ -292,10 +401,3 @@ h4 {
     color: black;
     font-family: 'Fonte', sans-serif;        
 }
-
-
-
-
-
-
-

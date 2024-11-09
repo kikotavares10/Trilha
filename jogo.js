@@ -2,7 +2,10 @@ import { Utils } from './utils.js';
 import { Jogador } from './jogador.js';
 import { Tabuleiro } from './tabuleiro.js';
 
+console.log("Script carregado");
 
+let vitorias_jog1=0;
+let vitorias_jog2=0;
 
 export class Jogo {
     constructor(jogador1, jogador2, tabuleiro,turno) {
@@ -13,7 +16,56 @@ export class Jogo {
         this.jogadas = 0; // Contador de jogadas para mudar de fase
         this.winner = false;
         this.fase = 1;
+        this.isComputerTurn = this.turno === 3;
     }  
+
+    alternarTurno() {
+        this.turno = this.turno === 2 ? 3 : 2;
+        this.isComputerTurn = this.turno === 3;
+    }
+
+    atualizarPecasDosJogadores() {
+        const pecasJogadorAzul = document.getElementById('pecas-jogador-azul');
+        const pecasJogadorVermelho = document.getElementById('pecas-jogador-vermelho');
+    
+        // Limpa o conteúdo atual dos contêineres
+        pecasJogadorAzul.innerHTML = '';
+        pecasJogadorVermelho.innerHTML = '';
+    
+        // Adiciona as peças do jogador azul
+        for (let i = 0; i < (3 * this.tabuleiro.quadrados - this.jogador1.pecas); i++) {
+            const pecaAzul = document.createElement('div');
+            pecaAzul.classList.add('bola', 'bola-azul');
+            pecasJogadorAzul.appendChild(pecaAzul);
+        }
+    
+        // Adiciona as peças do jogador vermelho
+        for (let i = 0; i < (3 * this.tabuleiro.quadrados - this.jogador2.pecas); i++) {
+            const pecaVermelha = document.createElement('div');
+            pecaVermelha.classList.add('bola', 'bola-vermelha');
+            pecasJogadorVermelho.appendChild(pecaVermelha);
+        }
+    }
+
+    atualizarPecasRemovidas(jogador) {
+        const contRemovidasAzul = document.getElementById('pecas-removidas-azul');
+        const contRemovidasVermelho = document.getElementById('pecas-removidas-vermelho');
+    
+        const pecaRemovida = document.createElement('div');
+        pecaRemovida.classList.add('bola');
+    
+        if (jogador === 2) {
+            // Jogador azul
+            pecaRemovida.classList.add('bola-azul');
+            contRemovidasAzul.appendChild(pecaRemovida);
+        } else if (jogador === 3) {
+            // Jogador vermelho
+            pecaRemovida.classList.add('bola-vermelha');
+            contRemovidasVermelho.appendChild(pecaRemovida);
+        }
+    }
+    
+    
 
     // Função para verificar se um jogador formou uma trilha
     verificarTrilha(linha,coluna) {  
@@ -112,7 +164,7 @@ export class Jogo {
     }
 
 
-    gerarFilhosfase22(linha,coluna){    // Gera os filhos para a fase 21 ou seja a fase de mover a peça
+    gerarFilhosfase22(linha,coluna){    // Gera os filhos para a fase 22 ou seja a fase de mover a peça
 
         const jogadorAdversario = (this.turno === 2) ? 3 : 2;
         const jogador_adversario_Str = jogadorAdversario.toString();
@@ -183,7 +235,9 @@ export class Jogo {
         } else {
             this.jogador1.pecas--;
         }
-    
+
+        this.atualizarPecasRemovidas(jogadorAdversario);
+
         Utils.mostrarMensagem(`Peça do Jogador ${jogadorAdversario} removida.`);
     }
     
@@ -208,16 +262,38 @@ export class Jogo {
                 this.jogador2.pecas++;
             }
 
+            this.atualizarPecasDosJogadores();
+
             //console.log(`Tabuleiro depois da jogada ${this.tabuleiro.forma}`)
             this.tabuleiro.imprimir(this.turno);
 
             if (this.verificarTrilha(linha, coluna)) {
-                Utils.mostrarMensagem(`Jogador ${this.turno} formou uma trilha!`);
+                Utils.mostrarMensagem(`Jogador ${this.turno-1} formou uma trilha!`);
                 console.log("Formou a trilha")
+
                 filhosRemover = this.gerarFilhosfase21(jogadorAdversario.toString());
-                console.log(`Filhos para remover: ${JSON.stringify(filhosRemover)}`)
-                const { x: i, y: j } = await aguardarClique();
-                this.removerPecaAdversaria(i,j);
+                console.log(`Filhos para remover: ${JSON.stringify(filhosRemover)}`);
+
+                if (this.isComputerTurn) {
+                    // Turno do computador: escolhe automaticamente uma peça do adversário para remover
+                    const pecaParaRemover = filhosRemover[Math.floor(Math.random() * filhosRemover.length)];
+                    this.removerPecaAdversaria(pecaParaRemover.x, pecaParaRemover.y);
+                    console.log("Computador removeu uma peça automaticamente");
+    
+                } else {
+
+                    let { x: i, y: j } = await aguardarClique();
+                    while (this.tabuleiro.forma[i][j] !== jogadorAdversario.toString()) {
+                        console.log("Posição inválida");
+                        // console.log(`i: ${i} j: ${j}`);
+                        // Atualizar `i` e `j` diretamente com uma nova chamada de aguardarClique
+                        ({ x: i, y: j } = await aguardarClique());
+                    }
+                    // console.log("Posição válida!");
+                    // console.log(`i: ${i} j: ${j}`);
+                    this.removerPecaAdversaria(i, j);
+                }
+
                 //console.log(`Tabuleiro depois de remover a peça ${this.tabuleiro.forma}`);
                 this.tabuleiro.imprimir(this.turno);
 
@@ -237,12 +313,29 @@ export class Jogo {
     
         if (this.verificarTrilha(linha2, coluna2)) {
             // console.log("Trilha verdadeira")
-            Utils.mostrarMensagem(`Jogador ${this.turno} formou uma trilha!`);
+            Utils.mostrarMensagem(`Jogador ${this.turno-1} formou uma trilha!`);
             filhosRemover = this.gerarFilhosfase21(jogadorAdversario.toString());
             console.log(`Filhos para remover: ${JSON.stringify(filhosRemover)}`)
-            const { x: i, y: j } = await aguardarClique();
-            this.removerPecaAdversaria(i,j);
-            console.log(`Tabuleiro depois de remover a peça ${this.tabuleiro.forma}`);
+
+            if (this.isComputerTurn) {
+                // Turno do computador: escolhe automaticamente uma peça do adversário para remover
+                const pecaParaRemover = filhosRemover[Math.floor(Math.random() * filhosRemover.length)];
+                this.removerPecaAdversaria(pecaParaRemover.x, pecaParaRemover.y);
+                console.log("Computador removeu uma peça automaticamente");
+
+            } else{
+                let { x: i, y: j } = await aguardarClique();
+                while (this.tabuleiro.forma[i][j] !== jogadorAdversario.toString()) {
+                    console.log("Posição inválida");
+                    // console.log(`i: ${i} j: ${j}`);
+                    // Atualizar `i` e `j` diretamente com uma nova chamada de aguardarClique
+                    ({ x: i, y: j } = await aguardarClique());
+                }
+                // console.log("Posição válida!");
+                // console.log(`i: ${i} j: ${j}`);
+                this.removerPecaAdversaria(i, j);
+            }
+
             this.tabuleiro.imprimir(this.turno);
         }
     }
@@ -265,19 +358,33 @@ export class Jogo {
             this.tabuleiro.imprimir(this.turno);
 
             if (this.verificarTrilha(linha2, coluna2)) {
-                Utils.mostrarMensagem(`Jogador ${this.turno} formou uma trilha!`);
-                console.log("Formou a trilha")
+                // console.log("Trilha verdadeira")
+                Utils.mostrarMensagem(`Jogador ${this.turno-1} formou uma trilha!`);
                 filhosRemover = this.gerarFilhosfase21(jogadorAdversario.toString());
                 console.log(`Filhos para remover: ${JSON.stringify(filhosRemover)}`)
-                const { x: i, y: j } = await aguardarClique();
-                this.removerPecaAdversaria(i,j);
-                //console.log(`Tabuleiro depois de remover a peça ${this.tabuleiro.forma}`);
+    
+                if (this.isComputerTurn) {
+                    // Turno do computador: escolhe automaticamente uma peça do adversário para remover
+                    const pecaParaRemover = filhosRemover[Math.floor(Math.random() * filhosRemover.length)];
+                    this.removerPecaAdversaria(pecaParaRemover.x, pecaParaRemover.y);
+                    console.log("Computador removeu uma peça automaticamente");
+    
+                } else{
+                    let { x: i, y: j } = await aguardarClique();
+                    while (this.tabuleiro.forma[i][j] !== jogadorAdversario.toString()) {
+                        console.log("Posição inválida");
+                        // console.log(`i: ${i} j: ${j}`);
+                        // Atualizar `i` e `j` diretamente com uma nova chamada de aguardarClique
+                        ({ x: i, y: j } = await aguardarClique());
+                    }
+                    // console.log("Posição válida!");
+                    // console.log(`i: ${i} j: ${j}`);
+                    this.removerPecaAdversaria(i, j);
+                }
+    
                 this.tabuleiro.imprimir(this.turno);
-
-            } 
-            
+            }       
         }
-
 
     }
 
@@ -333,8 +440,48 @@ export class Jogo {
         return true;
 
     }
-    
 
+    async jogarComputador() {
+        let jogada;
+    
+        if (this.fase === 1) {
+            // Fase 1: O computador coloca uma peça em qualquer posição disponível
+            const posicoesDisponiveis = this.gerarFilhosfase1();
+            jogada = posicoesDisponiveis[Math.floor(Math.random() * posicoesDisponiveis.length)];
+            await this.fase1(jogada.x, jogada.y);
+        } else if (this.fase === 2) {
+            // Fase 2: O computador move uma peça
+            const posicoesPecas = this.gerarFilhosfase21(this.turno);
+            let posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
+            let movimentosPossiveis = this.gerarFilhosfase22(posicaoSelecionada.x, posicaoSelecionada.y);
+            while (movimentosPossiveis.length === 0) {
+                posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
+                movimentosPossiveis = this.gerarFilhosfase22(posicaoSelecionada.x, posicaoSelecionada.y);
+                console.log(`O computador selecionou a peça ${posicaoSelecionada.x} ${posicaoSelecionada.y}`)
+            }
+            if (movimentosPossiveis.length > 0) {
+                jogada = movimentosPossiveis[Math.floor(Math.random() * movimentosPossiveis.length)];
+                await this.fase2(posicaoSelecionada.x, posicaoSelecionada.y, jogada.x, jogada.y);
+            }
+        } if (((this.turno === 2) && (this.jogador1.pecas === 3)) || ((this.turno === 3) && (this.jogador2.pecas === 3))) {
+            // Fase 3: O computador move uma peça para qualquer posição disponível
+            const posicoesPecas = this.gerarFilhosfase21(this.turno);
+            let posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
+            let posicoesDisponiveis = this.gerarFilhosfase1();
+            console.log(`posicoesDisponiveis: ${posicoesDisponiveis}`)
+            
+            if (posicoesDisponiveis.length > 0) {
+                jogada = posicoesDisponiveis[Math.floor(Math.random() * posicoesDisponiveis.length)];
+                await this.fase3(posicaoSelecionada.x, posicaoSelecionada.y, jogada.x, jogada.y);
+            }
+        }
+    
+        this.tabuleiro.jogadas++;
+        this.alternarTurno();
+        
+    }
+    
+    
     gameOver(){
         if (this.jogador1.pecas <= 2){
             Utils.mostrarMensagem("O jogador 2 ganhou")
@@ -354,6 +501,25 @@ export class Jogo {
         document.getElementById("vitorias-jogador1").innerText = `Vitórias do Jogador 1: ${this.vitorias_jog1}`;
         document.getElementById("vitorias-jogador2").innerText = `Vitórias do Jogador 2: ${this.vitorias_jog2}`;
     }
+
+
+    // clone() {
+    //     // Cria uma nova instância do jogo
+    //     const novoJogo = new Jogo(this.jogador1, this.jogador2, this.tabuleiro);
+
+    //     // Copia o estado do tabuleiro
+    //     novoJogo.tabuleiro = structuredClone(this.tabuleiro);
+
+    //     // Copia outros atributos importantes (jogadores, turno, fase, etc.)
+    //     novoJogo.jogador1 = structuredClone(this.jogador1);
+    //     novoJogo.jogador2 = structuredClone(this.jogador2);
+    //     novoJogo.turno = this.turno;
+    //     novoJogo.fase = this.fase;
+
+    //     return novoJogo;
+    // }
+
+
 }
 
 
@@ -407,6 +573,7 @@ async function iniciarJogo() {
 
     const jogo = new Jogo(jogador1, jogador2, tabuleiro,start_player);
 
+    jogo.atualizarPecasDosJogadores();
     jogo.tabuleiro.imprimir(jogo.turno); // Exibe o tabuleiro após o início
 
     // console.log("Descambou ainda mais");
@@ -416,8 +583,6 @@ async function iniciarJogo() {
 
 async function aguardarJogada(jogo) {
     let i, j, k, l; // Variáveis para coordenadas dos cliques
-
-    let filhos,filhos2;
 
     // Laço para continuar até que o jogo tenha um vencedor
     while (!jogo.winner) {
@@ -429,78 +594,76 @@ async function aguardarJogada(jogo) {
 
         if (jogo.fase === 2){
             jogo.gameOver();
-            console.log(`Acabou e o winner esta a ${jogo.winner}`)
+            // console.log(`Acabou e o winner esta a ${jogo.winner}`)
             if (jogo.winner) break; // Sai do loop se o jogo acabou
         }
 
-        Utils.mostrarMensagem(`O jogador ${jogo.turno} faça o seu movimento para a fase ${jogo.fase}`);
+        Utils.mostrarMensagem(`O jogador ${jogo.turno-1} faça o seu movimento para a fase ${jogo.fase}`);
         console.log(`A fase do jogo é ${jogo.fase}`);
 
         // console.log(`Tabuleiro atual: ${jogo.tabuleiro.forma}`)
 
-        // Passo 1: Aguarda o primeiro clique
-        const { x: i, y: j } = await aguardarClique();
+        console.log(`iscomputreTurn: ${jogo.isComputerTurn}`)
 
-        if (jogo.fase === 1) {
-            // Fase 1: Executa a jogada se for possível
-            if (jogo.receberCoordenadasfase1(i, j)) {
-                console.log("Executa ação para fase 1");
-                await jogo.fase1(i, j);
-                console.log("Jogada válida na fase 1!");
+        if (jogo.isComputerTurn) {
+            // Chama a função que faz o computador jogar
+            // console.log("entrou")
+            await jogo.jogarComputador();
+        } else {
+            // Passo 1: Aguarda o primeiro clique
+            const { x: i, y: j } = await aguardarClique();
 
-                // Alternar turno
-                jogo.tabuleiro.jogadas++;
-                jogo.turno = jogo.turno === 2 ? 3 : 2;
+            if (jogo.fase === 1) {
+                // Fase 1: Executa a jogada se for possível
+                if (jogo.receberCoordenadasfase1(i, j)) {
+                    // console.log("Executa ação para fase 1");
+                    await jogo.fase1(i, j);
+                    // console.log("Jogada válida na fase 1!");
 
-                filhos = jogo.gerarFilhosfase1();
-
-                console.log(`Filhos da fase 1: ${JSON.stringify(filhos)}`);
-
-            } else {
-                console.log("Jogada inválida na fase 1!");
-            }
-            // console.log(`Tabuleiro atual: ${jogo.tabuleiro.forma}`)
-
-        } else if (jogo.fase === 2) {
-
-            // Fase 2: Aguarda o segundo clique
-            const { x: k, y: l } = await aguardarClique();
-
-            console.log(`Turno é ${jogo.turno}`)
-            console.log(`Jogador 2 tem ${jogo.jogador1.pecas} pecas`)
-            console.log(`Jogador 3 tem ${jogo.jogador1.pecas} pecas`)
-
-            if (((jogo.turno === 2) && (jogo.jogador1.pecas === 3)) || ((jogo.turno === 3) && (jogo.jogador2.pecas === 3))){
-
-                if (jogo.receberCoordenadasfase1(k,l)) {        // Usamos a verificação da fase 1 porque é muito parecido à fase 3
-                    await jogo.fase3(i, j, k, l)
-                    console.log("Jogada válida na fase 3")
                     jogo.tabuleiro.jogadas++;
-                    jogo.turno = jogo.turno === 2 ? 3 : 2;
+                    jogo.alternarTurno();
+
                 } else {
-                    console.log("Jogada inválida na fase 3")
+                    console.log("Jogada inválida na fase 1!");
+                }
+                // console.log(`Tabuleiro atual: ${jogo.tabuleiro.forma}`)
+
+            } else if (jogo.fase === 2) {
+
+                // Fase 2: Aguarda o segundo clique
+                const { x: k, y: l } = await aguardarClique();
+
+                // console.log(`Turno é ${jogo.turno}`)
+                // console.log(`Jogador 2 tem ${jogo.jogador1.pecas} pecas`)
+                // console.log(`Jogador 3 tem ${jogo.jogador1.pecas} pecas`)
+
+                if (((jogo.turno === 2) && (jogo.jogador1.pecas === 3)) || ((jogo.turno === 3) && (jogo.jogador2.pecas === 3))){
+
+                    if (jogo.receberCoordenadasfase1(k,l)) {        // Usamos a verificação da fase 1 porque é muito parecido à fase 3
+                        await jogo.fase3(i, j, k, l)
+                        // console.log("Jogada válida na fase 3")
+                        jogo.tabuleiro.jogadas++;
+                        jogo.alternarTurno();
+                    } else {
+                        console.log("Jogada inválida na fase 3")
+                    }
+
                 }
 
-            }
+                else {
+                    
+                    // Verifica se a jogada com dois cliques é válida
+                    if (jogo.receberCoordenadasfase2(i, j, k, l)) {
+                        // Executa ação para fase 2
+                        await jogo.fase2(i, j, k, l);
+                        // console.log("Jogada válida na fase 2!");
+                        // Alternar turno
+                        jogo.tabuleiro.jogadas++;
+                        jogo.alternarTurno();
 
-            else {
-                filhos = jogo.gerarFilhosfase21(jogo.turno);
-                filhos2 = jogo.gerarFilhosfase22(i,j);
-
-                console.log(`Filhos para selecionar: ${JSON.stringify(filhos)}`);
-                console.log(`Filhos para mover: ${JSON.stringify(filhos2)}`);
-
-                // Verifica se a jogada com dois cliques é válida
-                if (jogo.receberCoordenadasfase2(i, j, k, l)) {
-                    // Executa ação para fase 2
-                    await jogo.fase2(i, j, k, l);
-                    console.log("Jogada válida na fase 2!");
-                    // Alternar turno
-                    jogo.tabuleiro.jogadas++;
-                    jogo.turno = jogo.turno === 2 ? 3 : 2;
-
-                } else {
-                    console.log("Jogada inválida na fase 2!");
+                    } else {
+                        console.log("Jogada inválida na fase 2!");
+                    }
                 }
             }
         }
@@ -519,11 +682,9 @@ function aguardarClique() {
     });
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("Clica")
     document.getElementById("play-button").addEventListener("click", async () => {
         await iniciarJogo();
     });
 });
-
-

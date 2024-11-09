@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="autenticar.css">
     <link rel="stylesheet" href="buttons.css">
     <script src="script.js" type="module"></script>
-    <script src="jogo2.js" type="module"></script>
+    <script src="jogo.js" type="module"></script>
 
                 
     <title>Jogo Trilha</title>
@@ -50,9 +50,9 @@
             <div class="setting_capsule">
                 <h3>Primeiro Jogador:</h3>
                 <input type="radio" id="start-player-one" name="start" value="start-player-one">
-                <label for="start-player-one">Jogador 1</label><br>
+                <label for="start-player-one">Jogador</label><br>
                 <input type="radio" id="start-player-two" name="start" value="start-player-two">
-                <label for="start-player-two">Jogador 2</label><br>
+                <label for="start-player-two">IA</label><br>
             </div>
 
             <div class="setting_capsule">
@@ -101,9 +101,18 @@
         </div>
     </div> 
 
-    <div id="game">
-        <div id="tabuleiro" class="tabuleiro"></div> 
-        
+    <div id="game" class="hidden">
+        <div id="game-container">
+            <div id="lado-esquerdo">
+                <div id="pecas-jogador-azul" class="pecas-jogador"></div>
+                <div id="pecas-removidas-azul" class="pecas-removidas"></div>
+            </div>
+            <div id="tabuleiro" class="tabuleiro"></div>
+            <div id="lado-direito">
+                <div id="pecas-jogador-vermelho" class="pecas-jogador"></div>
+                <div id="pecas-removidas-vermelho" class="pecas-removidas"></div>
+            </div>
+        </div>
     </div>
 
     <div id="botoes_game" class="none">
