@@ -36,11 +36,6 @@ forfeitButton.addEventListener('click', (event) => {
     game.classList.add('hidden')
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("play-button").addEventListener("click", async () => {
-        await iniciarJogo(); 
-    });
-});
 
 classificacoesButton.addEventListener('click', () => {
     classificacoesPanel.classList.remove('hidden');
