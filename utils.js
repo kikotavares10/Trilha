@@ -30,3 +30,4 @@ forfeitButton.addEventListener('click', (event) => {
     event.preventDefault();
     Utils.ocultarMensagem(); 
 });
+

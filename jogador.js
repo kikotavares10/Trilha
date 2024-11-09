@@ -3,6 +3,7 @@ export class Jogador {
         this.id = id;              // ID do jogador (1 ou 2)
         this.pecas = 0;            // Número de peças colocadas no tabuleiro
         this.pecasRemovidas = 0;
+        this.vitorias = 0;
     }
 
     adicionarPeca() {
@@ -14,4 +15,10 @@ export class Jogador {
             this.pecas--;
         }
     }
+    
+    adicionarVitoria() {
+        this.vitorias++;
+    }
 }
+
+

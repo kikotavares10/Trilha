@@ -2,26 +2,39 @@ import { Utils } from './utils.js';
 import { Jogador } from './jogador.js';
 import { Tabuleiro } from './tabuleiro.js';
 
-console.log("Script carregado");
-
-let vitorias_jog1=0;
-let vitorias_jog2=0;
+// console.log("Script carregado");
 
 export class Jogo {
-    constructor(jogador1, jogador2, tabuleiro,turno) {
+    constructor(jogador1, jogador2, tabuleiro) {
         this.jogador1 = jogador1;
         this.jogador2 = jogador2;
         this.tabuleiro = tabuleiro;
-        this.turno = turno; // 2 para jogador1, 3 para jogador2
+        this.turno = 2; // 2 para jogador1, 3 para jogador2
         this.jogadas = 0; // Contador de jogadas para mudar de fase
         this.winner = false;
         this.fase = 1;
-        this.isComputerTurn = this.turno === 3;
+        this.turnocomp = 0;
+
+        if (this.jogador1.id === 4){
+            this.isComputerTurn = true;
+            this.turnocomp = 2;
+            this.jogador1.id = 2;
+        } else if  (this.jogador2.id === 4){
+            this.isComputerTurn = false;
+            this.turnocomp = 3;
+            this.jogador2.id = 3;
+        }
+
+        this.jogadasFinais = 0;
     }  
 
     alternarTurno() {
         this.turno = this.turno === 2 ? 3 : 2;
-        this.isComputerTurn = this.turno === 3;
+        if (this.turnocomp === 3){
+            this.isComputerTurn = this.turno === 3;
+        } else if (this.turnocomp === 2){
+            this.isComputerTurn = this.turno === 2;
+        }
     }
 
     atualizarPecasDosJogadores() {
@@ -31,16 +44,19 @@ export class Jogo {
         // Limpa o conteúdo atual dos contêineres
         pecasJogadorAzul.innerHTML = '';
         pecasJogadorVermelho.innerHTML = '';
+
+        console.log(`Peças do jogador1: ${this.jogador1.pecas}`)
+        console.log(`Peças do jogador2: ${this.jogador2.pecas}`)
     
         // Adiciona as peças do jogador azul
-        for (let i = 0; i < (3 * this.tabuleiro.quadrados - this.jogador1.pecas); i++) {
+        for (let i = 0; i < (3 * this.tabuleiro.quadrados - this.jogador1.pecas- this.jogador1.pecasRemovidas); i++) {
             const pecaAzul = document.createElement('div');
             pecaAzul.classList.add('bola', 'bola-azul');
             pecasJogadorAzul.appendChild(pecaAzul);
         }
     
         // Adiciona as peças do jogador vermelho
-        for (let i = 0; i < (3 * this.tabuleiro.quadrados - this.jogador2.pecas); i++) {
+        for (let i = 0; i < (3 * this.tabuleiro.quadrados - this.jogador2.pecas- this.jogador2.pecasRemovidas); i++) {
             const pecaVermelha = document.createElement('div');
             pecaVermelha.classList.add('bola', 'bola-vermelha');
             pecasJogadorVermelho.appendChild(pecaVermelha);
@@ -56,10 +72,12 @@ export class Jogo {
     
         if (jogador === 2) {
             // Jogador azul
+            this.jogador1.pecasRemovidas++;
             pecaRemovida.classList.add('bola-azul');
             contRemovidasAzul.appendChild(pecaRemovida);
         } else if (jogador === 3) {
             // Jogador vermelho
+            this.jogador2.pecasRemovidas++;
             pecaRemovida.classList.add('bola-vermelha');
             contRemovidasVermelho.appendChild(pecaRemovida);
         }
@@ -101,7 +119,7 @@ export class Jogo {
         }
 
         //Verifica se tem moinhos na coluna
-        if (count === 3){
+        if (count >= 3){
             return true;
         }
         else{
@@ -127,7 +145,7 @@ export class Jogo {
                 break;
             } 
         }
-        if (count === 3) {
+        if (count >= 3) {
             return true;
         }
 
@@ -245,6 +263,7 @@ export class Jogo {
     // Função para a fase 1: Colocação das peças
     async fase1(linha,coluna) {
 
+        
         const jogadorAdversario = (this.turno === 2) ? 3 : 2;
 
         let filhosRemover;
@@ -295,6 +314,7 @@ export class Jogo {
                 }
 
                 //console.log(`Tabuleiro depois de remover a peça ${this.tabuleiro.forma}`);
+                this.atualizarPecasDosJogadores();
                 this.tabuleiro.imprimir(this.turno);
 
             } 
@@ -401,12 +421,12 @@ export class Jogo {
         }
 
         else if (this.tabuleiro.forma[linha][coluna] === this.turno.toString()) {
-            console.log(`Posição já ocupada por peça do jogador ${this.turno}`)
+            console.log(`Posição já ocupada por peça do jogador ${this.turno-1}`)
             return false;
         }
         
         else if (!this.tabuleiro.jogadaValida(linha, coluna)) {
-            console.log(`Jogada inválida. Tente novamente ${this.jogo.turno}`)
+            console.log(`Jogada inválida. Tente novamente ${this.turno-1}`)
             return false;
         }
 
@@ -445,36 +465,100 @@ export class Jogo {
         let jogada;
     
         if (this.fase === 1) {
-            // Fase 1: O computador coloca uma peça em qualquer posição disponível
+
+            // // Parte dificuldade "dificil"
             const posicoesDisponiveis = this.gerarFilhosfase1();
-            jogada = posicoesDisponiveis[Math.floor(Math.random() * posicoesDisponiveis.length)];
-            await this.fase1(jogada.x, jogada.y);
-        } else if (this.fase === 2) {
-            // Fase 2: O computador move uma peça
-            const posicoesPecas = this.gerarFilhosfase21(this.turno);
-            let posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
-            let movimentosPossiveis = this.gerarFilhosfase22(posicaoSelecionada.x, posicaoSelecionada.y);
-            while (movimentosPossiveis.length === 0) {
-                posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
-                movimentosPossiveis = this.gerarFilhosfase22(posicaoSelecionada.x, posicaoSelecionada.y);
-                console.log(`O computador selecionou a peça ${posicaoSelecionada.x} ${posicaoSelecionada.y}`)
+            let jogada = null;
+
+            for (let i = 0; i < posicoesDisponiveis.length; i++) {
+                const posicao = posicoesDisponiveis[i];
+                if (this.verificarTrilha(posicao.x,posicao.y)) { // Se verificarTrilha retornar true
+                    jogada = { x: posicao.x, y: posicao.y }; // Escolhe essa jogada que forma a trilha
+                    break; // Para o loop ao encontrar uma jogada que cria uma trilha
+                }
             }
-            if (movimentosPossiveis.length > 0) {
-                jogada = movimentosPossiveis[Math.floor(Math.random() * movimentosPossiveis.length)];
-                await this.fase2(posicaoSelecionada.x, posicaoSelecionada.y, jogada.x, jogada.y);
-            }
-        } if (((this.turno === 2) && (this.jogador1.pecas === 3)) || ((this.turno === 3) && (this.jogador2.pecas === 3))) {
-            // Fase 3: O computador move uma peça para qualquer posição disponível
-            const posicoesPecas = this.gerarFilhosfase21(this.turno);
-            let posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
-            let posicoesDisponiveis = this.gerarFilhosfase1();
-            console.log(`posicoesDisponiveis: ${posicoesDisponiveis}`)
-            
-            if (posicoesDisponiveis.length > 0) {
+
+            if (!jogada) {
                 jogada = posicoesDisponiveis[Math.floor(Math.random() * posicoesDisponiveis.length)];
-                await this.fase3(posicaoSelecionada.x, posicaoSelecionada.y, jogada.x, jogada.y);
             }
-        }
+
+            // Parte dificuldade facil
+
+            // const posicoesDisponiveis = this.gerarFilhosfase1();
+            // jogada = posicoesDisponiveis[Math.floor(Math.random() * posicoesDisponiveis.length)];
+            // await this.fase1(jogada.x, jogada.y);
+
+
+            // Executa a jogada
+            await this.fase1(jogada.x, jogada.y);
+
+        } else if (this.fase === 2) {
+
+
+            if (((this.turno === 2) && (this.jogador1.pecas === 3)) || ((this.turno === 3) && (this.jogador2.pecas === 3))) {
+                // Fase 3: O computador move uma peça para qualquer posição disponível
+
+                // //Parte dificuldade "dificil"
+                // const posicoesPecas = this.gerarFilhosfase21(this.turno);
+                // let jogada = null;
+                // let peca = null;
+
+                // for (let i = 0; i < posicoesPecas.length; i++) {
+                //     const posicaoSelecionada = posicoesPecas[i];
+                //     const posicoesDisponiveis = this.gerarFilhosfase1();
+                //     for (let j = 0; i < posicoesDisponiveis.length; i++) {
+                //         const posicao  = posicoesDisponiveis[i];
+                //         if (this.verificarTrilha(posicao.x,posicao.y)) { // Se verificarTrilha retornar true
+
+                //             peca = {x: posicaoSelecionada.x, y: posicaoSelecionada.y}
+                //             jogada = { x: posicao.x, y: posicao.y }; // Escolhe essa jogada que forma a trilha
+                //             console.log(`Peca ${peca.x} ${peca.y} mover para  ${jogada.x} ${jogada.y}`)
+                //             break; // Para o loop ao encontrar uma jogada que cria uma trilha
+                //         }
+                //     }
+                // }
+
+                // if (!jogada) {
+
+                //     peca = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
+                //     let posicoesDisponiveis = this.gerarFilhosfase1();
+                //     console.log(`posicoesDisponiveis: ${posicoesDisponiveis}`)
+                    
+                //     if (posicoesDisponiveis.length > 0) {
+                //         jogada = posicoesDisponiveis[Math.floor(Math.random() * posicoesDisponiveis.length)];
+                //     }
+                // }
+
+                // await this.fase3(peca.x, peca.y, jogada.x, jogada.y);
+
+
+                //Parte dificuldade facil
+                const posicoesPecas = this.gerarFilhosfase21(this.turno);
+                let posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
+                let posicoesDisponiveis = this.gerarFilhosfase1();
+                console.log(`posicoesDisponiveis: ${posicoesDisponiveis}`)
+                
+                if (posicoesDisponiveis.length > 0) {
+                    jogada = posicoesDisponiveis[Math.floor(Math.random() * posicoesDisponiveis.length)];
+                    await this.fase3(posicaoSelecionada.x, posicaoSelecionada.y, jogada.x, jogada.y);
+                }
+
+            } else {
+                // Fase 2: O computador move uma peça
+                const posicoesPecas = this.gerarFilhosfase21(this.turno);
+                let posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
+                let movimentosPossiveis = this.gerarFilhosfase22(posicaoSelecionada.x, posicaoSelecionada.y);
+                while (movimentosPossiveis.length === 0) {
+                    posicaoSelecionada = posicoesPecas[Math.floor(Math.random() * posicoesPecas.length)];
+                    movimentosPossiveis = this.gerarFilhosfase22(posicaoSelecionada.x, posicaoSelecionada.y);
+                    console.log(`O computador selecionou a peça ${posicaoSelecionada.x} ${posicaoSelecionada.y}`)
+                }
+                if (movimentosPossiveis.length > 0) {
+                    jogada = movimentosPossiveis[Math.floor(Math.random() * movimentosPossiveis.length)];
+                    await this.fase2(posicaoSelecionada.x, posicaoSelecionada.y, jogada.x, jogada.y);
+                }
+            }
+        } 
     
         this.tabuleiro.jogadas++;
         this.alternarTurno();
@@ -484,53 +568,111 @@ export class Jogo {
     
     gameOver(){
         if (this.jogador1.pecas <= 2){
-            Utils.mostrarMensagem("O jogador 2 ganhou")
+            Utils.mostrarMensagem("O jogador 3 ganhou")
+            const vencedor = 3;
             this.winner=true;
-            vitorias_jog2++;
+
+            return vencedor;
+
         }
 
         else if (this.jogador2.pecas <= 2){
-            Utils.mostrarMensagem("O jogador 1 ganhou")
+            Utils.mostrarMensagem("O jogador 2 ganhou");
+            const vencedor = 2;
             this.winner=true;
-            vitorias_jog1++;
+
+            return vencedor;
         }
-        this.atualizarClassificacoes();
+
+        else if ((this.jogador1.pecas === 3) && (this.jogador2.pecas === 3)){
+            this.jogadasFinais++;
+            if (this.jogadasFinais>=10){
+                Utils.mostrarMensagem("Empate");
+                const vencedor = 0;
+                this.winner=true;
+                return vencedor;
+            }
+        }
+
+        else if ((this.gerarFilhosfase1() === null)){
+            Utils.mostrarMensagem("Não há jogadas possiveis");
+            const vencedor = 0;
+            this.winner=true;
+            return vencedor;
+        }
+
+        else {
+            let movimentoEncontrado = false;
+        
+            for (let i = 0; i < this.tabuleiro.forma.length; i++) {
+                if (movimentoEncontrado) break;
+                
+                for (let j = 0; j < this.tabuleiro.forma.length; j++) {
+                    if (this.tabuleiro.forma[i][j] === '1') {
+                        
+                        for (let g = 0; g < this.tabuleiro.forma.length; g++) {
+                            if (movimentoEncontrado) break;
+                            
+                            for (let h = 0; h < this.tabuleiro.forma.length; h++) {
+                                if (this.tabuleiro.movimentoValido(i, j, g, h, this.turno)) {
+                                    movimentoEncontrado = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        
+            // Se não foi encontrado nenhum movimento válido
+            if (!movimentoEncontrado) {
+                Utils.mostrarMensagem("Não há jogadas possíveis");
+                const vencedor = 0;
+                this.winner = true;
+                return vencedor;
+            }
+        }
+        
+        return;
+
     }
-
-    atualizarClassificacoes() {
-        document.getElementById("vitorias-jogador1").innerText = `Vitórias do Jogador 1: ${this.vitorias_jog1}`;
-        document.getElementById("vitorias-jogador2").innerText = `Vitórias do Jogador 2: ${this.vitorias_jog2}`;
-    }
-
-
-    // clone() {
-    //     // Cria uma nova instância do jogo
-    //     const novoJogo = new Jogo(this.jogador1, this.jogador2, this.tabuleiro);
-
-    //     // Copia o estado do tabuleiro
-    //     novoJogo.tabuleiro = structuredClone(this.tabuleiro);
-
-    //     // Copia outros atributos importantes (jogadores, turno, fase, etc.)
-    //     novoJogo.jogador1 = structuredClone(this.jogador1);
-    //     novoJogo.jogador2 = structuredClone(this.jogador2);
-    //     novoJogo.turno = this.turno;
-    //     novoJogo.fase = this.fase;
-
-    //     return novoJogo;
-    // }
 
 
 }
 
 
-// Função para iniciar o jogo
 async function iniciarJogo() {
     console.log("Função iniciarJogo chamada");
     Utils.mostrarMensagem("Bem-vindo ao Jogo Trilha!");
     // console.log("Descambou");
-    let jogador1 = new Jogador(2);
+    let jogador1= new Jogador(2)
     let jogador2 = new Jogador(3);
-
+  
+    const startPlayer = document.querySelector('input[name="start"]:checked');
+    const multiplayer= document.querySelector('input[name="game-mode"]:checked');
+    
+    
+    if (multiplayer.value == 'multiplayer') {
+        if(startPlayer.value== 'start-player-one') {
+            jogador1=new Jogador(2);
+            jogador2=new Jogador(3);
+        }
+         if(startPlayer.value== 'start-player-two'){
+            jogador1=new Jogador(3);
+            jogador2=new Jogador(2);
+            
+        }
+    }
+    if (multiplayer.value == 'cpu') {
+        if (startPlayer.value=='start-player-one') {
+            jogador1=new Jogador(2);
+            jogador2=new Jogador(4);
+        }
+        if (startPlayer.value=='start-player-two') {
+            jogador1=new Jogador(4);
+            jogador2=new Jogador(2);
+        }
+    }
     const dimensionRadio = document.querySelector('input[name="dimension"]:checked');
     let numeroQuadrados = 3; // Valor padrão
 
@@ -538,13 +680,13 @@ async function iniciarJogo() {
     if (dimensionRadio) {
         switch (dimensionRadio.value) {
             case 'dimension1':
-                numeroQuadrados = 3;
+                numeroQuadrados = 2;
                 break;
             case 'dimension2':
-                numeroQuadrados = 4;
+                numeroQuadrados = 3;
                 break;
             case 'dimension3':
-                numeroQuadrados = 5;
+                numeroQuadrados = 4;
                 break;
             default:
                 numeroQuadrados = 3; // Padrão, caso nenhum botão seja selecionado
@@ -553,25 +695,9 @@ async function iniciarJogo() {
     }
     let tabuleiro = new Tabuleiro(numeroQuadrados);
 
-    const startPlayer = document.querySelector('input[name="start"]:checked');
-    let start_player = 2; // Valor padrão
 
-    // Verifica qual botão de rádio está selecionado
-    if (startPlayer) {
-        switch (startPlayer.value) {
-            case 'start-player-one':
-                start_player = 2;
-                break;
-            case 'start-player-two':
-                start_player = 3;
-                break;
-            default:
-                start_player = 2; // Padrão, caso nenhum botão seja selecionado
-                break;
-        }
-    }
-
-    const jogo = new Jogo(jogador1, jogador2, tabuleiro,start_player);
+   
+    const jogo = new Jogo(jogador1, jogador2, tabuleiro);
 
     jogo.atualizarPecasDosJogadores();
     jogo.tabuleiro.imprimir(jogo.turno); // Exibe o tabuleiro após o início
@@ -581,8 +707,10 @@ async function iniciarJogo() {
     await aguardarJogada(jogo);
 }
 
+
 async function aguardarJogada(jogo) {
     let i, j, k, l; // Variáveis para coordenadas dos cliques
+    let vencedor;
 
     // Laço para continuar até que o jogo tenha um vencedor
     while (!jogo.winner) {
@@ -593,12 +721,12 @@ async function aguardarJogada(jogo) {
         }
 
         if (jogo.fase === 2){
-            jogo.gameOver();
+            vencedor = jogo.gameOver();
             // console.log(`Acabou e o winner esta a ${jogo.winner}`)
             if (jogo.winner) break; // Sai do loop se o jogo acabou
         }
 
-        Utils.mostrarMensagem(`O jogador ${jogo.turno-1} faça o seu movimento para a fase ${jogo.fase}`);
+        Utils.mostrarMensagem(`O jogador ${jogo.turno - 1} faça o seu movimento para a fase ${jogo.fase}`);
         console.log(`A fase do jogo é ${jogo.fase}`);
 
         // console.log(`Tabuleiro atual: ${jogo.tabuleiro.forma}`)
@@ -612,6 +740,8 @@ async function aguardarJogada(jogo) {
         } else {
             // Passo 1: Aguarda o primeiro clique
             const { x: i, y: j } = await aguardarClique();
+
+            console.log(`i: ${i} j: ${j}`)
 
             if (jogo.fase === 1) {
                 // Fase 1: Executa a jogada se for possível
@@ -669,6 +799,8 @@ async function aguardarJogada(jogo) {
         }
 
     }
+    // console.log(`Vencedor no aguardar jogada: ${vencedor}`)
+    return vencedor;
 }
 
 // Função auxiliar para aguardar um clique e retornar as coordenadas
@@ -685,6 +817,7 @@ function aguardarClique() {
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Clica")
     document.getElementById("play-button").addEventListener("click", async () => {
-        await iniciarJogo();
+        const vencedor = await iniciarJogo();
+        // console.log(`Vencedor no final: ${vencedor}`)
     });
 });

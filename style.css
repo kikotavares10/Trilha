@@ -5,9 +5,14 @@
 }
 
 html, body {
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
     height: 100%;
     font-family: 'Fonte', sans-serif;                                           
     background: linear-gradient(#f2cfc0, #c6cdec);
+    
 }
 
 @font-face {
@@ -84,6 +89,7 @@ html, body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    
     
 }
 
@@ -330,19 +336,6 @@ h4 {
     background-color: #7766a8;
     transition: background-color 0.3s ease;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
