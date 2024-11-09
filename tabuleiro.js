@@ -2,7 +2,7 @@ import { Utils } from './utils.js';
 import { Jogo } from './jogo.js';
 
 export class Tabuleiro {
-    constructor(n=3) {
+    constructor(n) {
         this.jogadas = 1;
         this.gerarForma(n*2+1);
         this.tamanho = n*2+1;

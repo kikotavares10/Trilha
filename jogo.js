@@ -2,12 +2,14 @@ import { Utils } from './utils.js';
 import { Jogador } from './jogador.js';
 import { Tabuleiro } from './tabuleiro.js';
 
+
+
 export class Jogo {
-    constructor(jogador1, jogador2, tabuleiro) {
+    constructor(jogador1, jogador2, tabuleiro,turno) {
         this.jogador1 = jogador1;
         this.jogador2 = jogador2;
         this.tabuleiro = tabuleiro;
-        this.turno = 2; // 2 para jogador1, 3 para jogador2
+        this.turno = turno; // 2 para jogador1, 3 para jogador2
         this.jogadas = 0; // Contador de jogadas para mudar de fase
         this.winner = false;
         this.fase = 1;
@@ -332,16 +334,25 @@ export class Jogo {
 
     }
     
+
     gameOver(){
         if (this.jogador1.pecas <= 2){
-            Utils.mostrarMensagem("O jogador 3 ganhou")
+            Utils.mostrarMensagem("O jogador 2 ganhou")
             this.winner=true;
+            vitorias_jog2++;
         }
 
         else if (this.jogador2.pecas <= 2){
-            Utils.mostrarMensagem("O jogador 2 ganhou")
+            Utils.mostrarMensagem("O jogador 1 ganhou")
             this.winner=true;
+            vitorias_jog1++;
         }
+        this.atualizarClassificacoes();
+    }
+
+    atualizarClassificacoes() {
+        document.getElementById("vitorias-jogador1").innerText = `Vitórias do Jogador 1: ${this.vitorias_jog1}`;
+        document.getElementById("vitorias-jogador2").innerText = `Vitórias do Jogador 2: ${this.vitorias_jog2}`;
     }
 }
 
@@ -353,9 +364,48 @@ async function iniciarJogo() {
     // console.log("Descambou");
     let jogador1 = new Jogador(2);
     let jogador2 = new Jogador(3);
-    let tabuleiro = new Tabuleiro();
 
-    const jogo = new Jogo(jogador1, jogador2, tabuleiro);
+    const dimensionRadio = document.querySelector('input[name="dimension"]:checked');
+    let numeroQuadrados = 3; // Valor padrão
+
+    // Verifica qual botão de rádio está selecionado
+    if (dimensionRadio) {
+        switch (dimensionRadio.value) {
+            case 'dimension1':
+                numeroQuadrados = 3;
+                break;
+            case 'dimension2':
+                numeroQuadrados = 4;
+                break;
+            case 'dimension3':
+                numeroQuadrados = 5;
+                break;
+            default:
+                numeroQuadrados = 3; // Padrão, caso nenhum botão seja selecionado
+                break;
+        }
+    }
+    let tabuleiro = new Tabuleiro(numeroQuadrados);
+
+    const startPlayer = document.querySelector('input[name="start"]:checked');
+    let start_player = 2; // Valor padrão
+
+    // Verifica qual botão de rádio está selecionado
+    if (startPlayer) {
+        switch (startPlayer.value) {
+            case 'start-player-one':
+                start_player = 2;
+                break;
+            case 'start-player-two':
+                start_player = 3;
+                break;
+            default:
+                start_player = 2; // Padrão, caso nenhum botão seja selecionado
+                break;
+        }
+    }
+
+    const jogo = new Jogo(jogador1, jogador2, tabuleiro,start_player);
 
     jogo.tabuleiro.imprimir(jogo.turno); // Exibe o tabuleiro após o início
 
@@ -471,7 +521,9 @@ function aguardarClique() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("iniciar-jogo").addEventListener("click", async () => {
-        await iniciarJogo(); // Inicia o jogo
+    document.getElementById("play-button").addEventListener("click", async () => {
+        await iniciarJogo();
     });
 });
+
+

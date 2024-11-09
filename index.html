@@ -8,10 +8,8 @@
     <link rel="stylesheet" href="autenticar.css">
     <link rel="stylesheet" href="buttons.css">
     <script src="script.js" type="module"></script>
-    <script src="jogo.js" type="module"></script>
-    <script src="script_game.js" type="module"></script>
+    <script src="jogo2.js" type="module"></script>
 
-    <link href="https://fonts.cdnfonts.com/css/games" rel="stylesheet">
                 
     <title>Jogo Trilha</title>
 </head>
@@ -36,7 +34,7 @@
                 <input type="radio" id="multiplayer" name="game-mode" value="multiplayer">
                 <label for="multiplayer">Jogador vs Jogador (soon)</label><br>
                 <input type="radio" id="cpu" name="game-mode" value="cpu">
-                <label for="cpu">Jogador vs CPU</label><br>           
+                <label for="cpu">Jogador vs IA</label><br>           
             </div>
 
             <div class="setting_capsule">
@@ -60,11 +58,11 @@
             <div class="setting_capsule">
                 <h3>Dimensões do Tabuleiro:</h3>
                 <input type="radio" id="dimension1" name="dimension" value="dimension1">
-                <label for="dimension1">7x7</label><br>
+                <label for="dimension1">3 Quadrados</label><br>
                 <input type="radio" id="dimension2" name="dimension" value="dimension2">
-                <label for="dimension2">9x9</label><br>
+                <label for="dimension2">4 Quadrados</label><br>
                 <input type="radio" id="dimension3" name="dimension" value="dimension3">
-                <label for="dimension3">11x11</label><br>                
+                <label for="dimension3">5 Quadrados</label><br>                
             </div>
         </form>
     </div>
@@ -119,6 +117,17 @@
         <p> Trilha Game</p>
         <p>Francisco Tavares, Rodrigo Batista, Rodrigo Taveira</p>
     </footer>
+
+
+    <!-- Instruções -->
+    <div id="classificacoes" class="painel-classificacoes hidden" >
+        <div class="classificacoes-conteudo">
+            <h3>Classificações</h3>
+            <p id="vitorias-jogador1">Vitórias do Jogador 1: 0</p>
+            <p id="vitorias-jogador2">Vitórias do Jogador 2: 0</p>
+            <button id="fechar-classificacoes">Fechar</button>
+        </div>
+    </div> 
 
 </body>
 
