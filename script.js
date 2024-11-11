@@ -13,6 +13,19 @@ const classificacoesButton = document.getElementById('classificacao-button');
 const botoes_game=document.getElementById('botoes_game');
 const game = document.getElementById('game');
 
+const loginBox = document.getElementById('login-box');
+const submitButton = document.getElementById('submit-button');
+const botoes = document.getElementById('botoes');
+
+
+submitButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    loginBox.classList.add('hidden');
+    configurations.classList.remove('hidden');
+    botoes.classList.remove('hidden')
+    botoes_game.classList.remove('hidden')
+});
+
 
 instrucoesButton.addEventListener('click', () => {
     instrucoesPanel.classList.remove('hidden');
@@ -33,9 +46,14 @@ forfeitButton.addEventListener('click', (event) => {
     event.preventDefault();
     configurations.classList.remove('hidden');
     botoes_game.classList.remove('hidden');
-    game.classList.add('hidden')
+    game.classList.add('hidden');
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("play-button").addEventListener("click", async () => {
+        await iniciarJogo(); 
+    });
+});
 
 classificacoesButton.addEventListener('click', () => {
     classificacoesPanel.classList.remove('hidden');

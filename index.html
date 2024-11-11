@@ -15,9 +15,28 @@
 </head>
 
 <body>
-    
+    <!-- Página de Login -->
+    <div id="login-box">
+        <div class="image-container">
+            <div class="image-border">
+                <img src="images/logo.jpg" alt="Trilha logo" width="100" height="100">
+            </div>
+        </div>
+        <h2>Login</h2>
+        <form>
+            <div class="user-box">
+                <input type="text" name="username" required>
+                <label>Usuário</label>
+            </div>
+            <div class="user-box">
+                <input type="password" name="password" required>
+                <label>Senha</label>
+            </div>
+            <button type="submit" id="submit-button">Enviar</button>
+        </form>
+    </div>
     <!-- Página de Configuração -->
-    <div id="configurations" class="none">
+    <div id="configurations" class="hidden">
         <nav class="header">
             <div class="image-container">
                 <img src="images/logo.jpg" alt="Trilha logo" width="100" height="100">
@@ -66,7 +85,7 @@
             </div>
         </form>
     </div>
-    <div id="botoes" class="none"> 
+    <div id="botoes" class="hidden"> 
         <button id="instrucoes-button">
             <img src="images/question.png" alt="question" class="instrucao-img">
         </button>
@@ -94,6 +113,7 @@
             <p>Quando um jogador alinha 3 peças em uma linha, ele forma um moinho e pode capturar uma peça do adversário.</p>
             <h4>Regras Adicionais:</h4>
             <ul>
+                <li>Quando um jogador tem apenas 3 peças na fase 2, pode fazer movimento livre.</lil>
                 <li>Se um jogador tiver apenas 2 peças, ele perde o jogo.</li>
                 <li>Um empate ocorre se ambos os jogadores tiverem 3 peças e não houver jogadas válidas em 10 turnos.</li>
             </ul>
@@ -115,11 +135,13 @@
         </div>
     </div>
 
-    <div id="botoes_game" class="none">
+    <div id="botoes_game" class="hidden">
         <button id="play-button">Play</button>
     </div>
 
     <div id="mensagem" class="mensagem-oculta"></div>
+
+    <div id="mensagem-temporaria" class="mensagem-temporaria mensagem-oculta">Jogada inválida!</div>
 
 
     <footer id="footer" class="hidden" style="text-align: center;">

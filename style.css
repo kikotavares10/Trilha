@@ -177,7 +177,6 @@ h4 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilos específicos para cada jogador */
 #pecas-jogador-azul {
     background-color: #cceeff;
 }
@@ -186,7 +185,6 @@ h4 {
     background-color: #ffcccc;
 }
 
-/* Estilo das peças dentro do contêiner */
 .pecas-jogador .bola {
     width: 30px;
     height: 30px;
@@ -194,7 +192,6 @@ h4 {
     margin: 5px 0;
 }
 
-/* Estrutura dos lados esquerdo e direito */
 #lado-esquerdo, #lado-direito {
     display: flex;
     flex-direction: column;
@@ -202,7 +199,6 @@ h4 {
     justify-content: center;
 }
 
-/* Contêiner para as peças removidas */
 .pecas-removidas {
     display: flex;
     flex-wrap: wrap;
@@ -215,7 +211,6 @@ h4 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo das peças removidas */
 .pecas-removidas .bola {
     width: 20px;
     height: 20px;
@@ -223,15 +218,13 @@ h4 {
     margin: 3px;
 }
 
-/* Estilo da grade do tabuleiro */
 .tabuleiro-grid {
     border-collapse: collapse;
     table-layout: fixed;
-    width: 520px; /* Tamanho total do tabuleiro */
+    width: 520px; 
     height: 520px;
 }
 
-/* Estilo das células */
 .tabuleiro-grid td {
     width: 40px;
     height: 40px;
@@ -240,7 +233,6 @@ h4 {
     position: relative;
 }
 
-/* Estilo das peças (bolas) */
 .bola, .bola-azul, .bola-vermelha {
     width: 30px;
     height: 30px;
@@ -251,7 +243,7 @@ h4 {
     margin: auto;
 }
 
-/* Cores específicas das peças */
+
 .bola {
     background-color: #00ccff;
 }
@@ -264,13 +256,11 @@ h4 {
     background-color: red;
 }
 
-/* Estilos para as linhas de ligação */
 .linha-horizontal, .linha-vertical {
     background-color: #7f8c8d;
     position: absolute;
 }
 
-/* Linha horizontal */
 .linha-horizontal {
     width: 100%;
     height: 5px;
@@ -279,7 +269,6 @@ h4 {
     transform: translateY(-50%);
 }
 
-/* Linha vertical */
 .linha-vertical {
     width: 5px;
     height: 100%;
@@ -288,7 +277,6 @@ h4 {
     transform: translateX(-50%);
 }
 
-/* Estilo para a célula do centro */
 .centro {
     background-color: transparent;
 }
@@ -351,12 +339,36 @@ h4 {
     border-radius: 5px;
     text-align: center;
     font-size: 16px;
-    max-width: 150px;
+    max-width: 250px;
     margin: 10px auto;
 }
 
 .mensagem-oculta {
     display: none;
+}
+
+.mensagem-temporaria {
+    position: absolute;
+    bottom: 20px; /* Posiciona a mensagem no rodapé */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 85, 0, 0.8); /* Cor de fundo vermelha para aviso */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+    opacity: 0; /* Inicialmente invisível */
+    transition: opacity 0.3s ease;
+    z-index: 10; /* Mantém a mensagem acima dos outros elementos */
+}
+
+.mensagem-visivel {
+    opacity: 1; /* Torna a mensagem visível */
+}
+
+.mensagem-oculta {
+    opacity: 0; /* Torna a mensagem invisível */
 }
 
 
